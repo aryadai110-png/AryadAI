@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>پلتفرم هوشمند آریاد | سامانه رشد و یادگیری فردی</title>
+​<!-- فونت وزیرمتن -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+​<!-- Tailwind CSS CDN -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+theme: {
+extend: {
+fontFamily: {
+sans: ['Vazirmatn', 'sans-serif'],
+},
+colors: {
+brand: {
+50: '#eef2ff',
+500: '#6366f1',
+600: '#4f46e5',
+700: '#4338ca',
+}
+}
+}
+}
+}
+</script>
+​<!-- Lucide Icons -->
+<script src="https://unpkg.com/lucide@latest"></script>
+​<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+​<style>
+body {
+font-family: 'Vazirmatn', sans-serif;
+font-feature-settings: "ss01";
+user-select: none;
+}
+​/* Scrollbar */
+::-webkit-scrollbar {
+width: 6px;
+height: 6px;
+}
+::-webkit-scrollbar-track {
+background: #0f172a;
+}
+::-webkit-scrollbar-thumb {
+background: #334155;
+border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+background: #475569;
+}
+​/* Waveform Animation */
+@keyframes waveBar {
+0%, 100% { height: 12px; }
+50% { height: 48px; }
+}
+.wave-active {
+animation: waveBar 1.2s ease-in-out infinite;
+}
+</style>
+</head>
+​<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col md:flex-row overflow-x-hidden antialiased">
+​<!-- ==================== SIDEBAR ==================== -->
+<aside class="w-full md:w-64 bg-slate-900/80 border-b md:border-b-0 md:border-l border-slate-800/80 backdrop-blur-xl flex flex-col justify-between p-4 z-50">
+<div>
+<!-- Brand Logo -->
+<div class="flex items-center gap-3 px-2 py-4 border-b border-slate-800">
+<div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center shadow-lg shadow-indigo-500/25">
+<i data-lucide="sparkles" class="w-5 h-5 text-white"></i>
+</div>
+<div>
+<h1 class="font-extrabold text-lg tracking-tight bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">آریـــاد</h1>
+<p class="text-[11px] text-slate-400 font-medium">پلتفرم رشد و یادگیری فردی</p>
+</div>
+</div>
+​<!-- Navigation Tabs -->
+<nav class="mt-6 space-y-1.5" id="navContainer">
+<button onclick="switchTab('avayar')" id="nav-avayar" class="nav-item w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm font-semibold transition-all duration-200 bg-indigo-600/15 text-indigo-400 border border-indigo-500/30 shadow-sm">
+<i data-lucide="mic" class="w-4 h-4"></i>
+<span>آوایار (ضبط کلاس)</span>
+</button>
+​<button onclick="switchTab('porseshgar')" id="nav-porseshgar" class="nav-item w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm font-medium transition-all duration-200 text-slate-400 hover:bg-slate-800/60 hover:text-slate-200">
+<i data-lucide="brain-circuit" class="w-4 h-4"></i>
+<span>پرسشگر (آزمون شبانه)</span>
+</button>
+​<button onclick="switchTab('didehban')" id="nav-didehban" class="nav-item w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm font-medium transition-all duration-200 text-slate-400 hover:bg-slate-800/60 hover:text-slate-200">
+<i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+<span>دیده‌بان (داشبورد مدیر)</span>
+</button>
+​<button onclick="switchTab('maham')" id="nav-maham" class="nav-item w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm font-medium transition-all duration-200 text-slate-400 hover:bg-slate-800/60 hover:text-slate-200">
+<i data-lucide="calendar-check" class="w-4 h-4"></i>
+<span>مهام (تقویم تکالیف)</span>
+</button>
+​<button onclick="switchTab('hamrah')" id="nav-hamrah" class="nav-item w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm font-medium transition-all duration-200 text-slate-400 hover:bg-slate-800/60 hover:text-slate-200">
+<i data-lucide="bot" class="w-4 h-4"></i>
+<span>همراه (دستیار هوش‌مصنوعی)</span>
+</button>
+</nav>
+</div>
+​<!-- Active Profile Footer -->
+<div class="mt-6 pt-4 border-t border-slate-800 flex items-center justify-between">
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-xs font-bold text-indigo-400">
+ما
+</div>
+<div>
+<div class="text-xs font-semibold text-slate-200">مهندس احمدی</div>
+<div class="text-[10px] text-slate-500">معلم فیزیک دبیرستان</div>
+</div>
+</div>
+<span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">آنلاین</span>
+</div>
+</aside>
+​<!-- ==================== MAIN CONTENT ==================== -->
+<main class="flex-1 flex flex-col min-h-screen overflow-y-auto bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950">
+​<!-- Top Header -->
+<header class="h-16 px-6 border-b border-slate-800/80 flex items-center justify-between bg-slate-950/40 backdrop-blur-md sticky top-0 z-40">
+<div class="flex items-center gap-2 text-xs md:text-sm text-slate-400">
+<span class="hidden sm:inline">دبیرستان هوشمند نمونه علامه</span>
+<i data-lucide="chevron-left" class="w-3.5 h-3.5 text-slate-600 hidden sm:inline"></i>
+<span id="currentModuleTitle" class="text-indigo-400 font-semibold">ماژول آوایار (خلاصه‌ساز صوتی)</span>
+</div>
+<div class="flex items-center gap-3">
+<div class="text-xs text-slate-400 bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-full flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+نسخه نمایشی فعال (MVP 1.0)
+</div>
+</div>
+</header>
+​<!-- Content Pages Wrapper -->
+<div class="p-4 md:p-8 flex-1">
+​<!-- ================= 1. آوایار ================= -->
+<section id="tab-avayar" class="tab-content space-y-6">
+<div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-6 relative overflow-hidden backdrop-blur-sm">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-800">
+<div>
+<h2 class="text-xl font-bold text-white flex items-center gap-2.5">
+<span class="p-2 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400">
+<i data-lucide="mic" class="w-5 h-5"></i>
+</span>
+آوایار: ثبت، تبدیل و خلاصه‌سازی هوشمند جلسه
+</h2>
+<p class="text-xs text-slate-400 mt-1">صدای تدریس را ثبت کنید تا هوش مصنوعی خلاصه و سرفصل‌ها را در چند ثانیه استخراج کند.</p>
+</div>
+​<div class="flex items-center gap-3">
+<label class="text-xs text-slate-400 font-medium">کلاس جاری:</label>
+<select class="bg-slate-950 border border-slate-700/80 text-xs rounded-xl px-3 py-2 text-slate-200 focus:outline-none focus:border-indigo-500">
+<option>فیزیک دهم — کلاس ۱۰۲ (ریاضی)</option>
+<option>فیزیک یازدهم — کلاس ۲۰۱ (تجربی)</option>
+</select>
+</div>
+</div>
+​<!-- Recorder Area -->
+<div class="py-12 flex flex-col items-center justify-center text-center">
+​<!-- Big Mic Button -->
+<button id="micBtn" onclick="toggleRecording()" class="relative group cursor-pointer">
+<div id="micRing" class="absolute -inset-2 bg-gradient-to-r from-rose-500 to-indigo-500 rounded-full opacity-0 group-hover:opacity-40 blur transition duration-300"></div>
+<div id="micInner" class="w-24 h-24 rounded-full bg-rose-600 hover:bg-rose-500 text-white flex items-center justify-center shadow-xl shadow-rose-600/30 transition-all duration-300 transform active:scale-95">
+<i data-lucide="mic" id="micIcon" class="w-10 h-10"></i>
+</div>
+</button>
+​<!-- Live Timer & Waveform -->
+<div id="recordingFeedback" class="mt-6 hidden flex flex-col items-center gap-3">
+<span id="recordTimer" class="font-mono text-2xl font-bold text-rose-500 tracking-wider">00:00</span>
+<div class="flex items-center gap-1.5 h-12 px-4 py-2 bg-slate-950/60 rounded-full border border-slate-800">
+<div class="w-1 bg-rose-500 rounded-full wave-active" style="animation-delay: 0.1s"></div>
+<div class="w-1 bg-rose-500 rounded-full wave-active" style="animation-delay: 0.3s"></div>
+<div class="w-1 bg-rose-500 rounded-full wave-active" style="animation-delay: 0.5s"></div>
+<div class="w-1 bg-rose-500 rounded-full wave-active" style="animation-delay: 0.2s"></div>
+<div class="w-1 bg-rose-500 rounded-full wave-active" style="animation-delay: 0.6s"></div>
+<div class="w-1 bg-rose-500 rounded-full wave-active" style="animation-delay: 0.4s"></div>
+<div class="w-1 bg-rose-500 rounded-full wave-active" style="animation-delay: 0.7s"></div>
+</div>
+<p class="text-xs text-slate-400">در حال ضبط صدای تدریس معلم... جهت توقف کلیک کنید.</p>
+</div>
+​<div id="recordIdlePrompt" class="mt-4 text-xs text-slate-400">
+برای شروع ضبط جلسه امروز، روی میکروفون کلیک کنید.
+</div>
+</div>
+​<!-- Processed Output Card (Hidden by default) -->
+<div id="sessionResult" class="hidden border-t border-slate-800/80 pt-6 space-y-4">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2 text-emerald-400 text-xs font-semibold">
+<i data-lucide="check-circle-2" class="w-4 h-4"></i>
+جلسه پردازش شد و خروجی هوش مصنوعی آماده است
+</div>
+<button onclick="publishSummary()" id="publishBtn" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 transition">
+<i data-lucide="send" class="w-3.5 h-3.5"></i>
+انتشار برای دانش‌آموزان کلاس
+</button>
+</div>
+​<div class="bg-slate-950/70 border border-slate-800 rounded-xl p-5 space-y-3">
+<div class="flex flex-wrap gap-2 items-center">
+<span class="text-xs text-slate-400">موضوعات استخراج‌شده:</span>
+<span class="px-2.5 py-1 rounded-lg bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 text-xs font-medium">سینماتیک و حرکت</span>
+<span class="px-2.5 py-1 rounded-lg bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 text-xs font-medium">فرمول شتاب متوسط</span>
+<span class="px-2.5 py-1 rounded-lg bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 text-xs font-medium">حل معادله سرعت - زمان</span>
+</div>
+​<div class="text-xs font-semibold text-slate-300 pt-2">خلاصه ۵ بندی جلسه امروز:</div>
+<ol class="list-decimal list-inside space-y-1.5 text-xs text-slate-400 leading-relaxed">
+<li>معرفی مفهوم شتاب به عنوان تغییرات سرعت در بازه زمانی معین (a = \frac{\Delta v}{\Delta t}).</li>
+<li>تفاوت اساسی میان علامت جهت حرکت و جهت شتاب (کاهنده یا فزاینده بودن).</li>
+<li>تحلیل دو نمودار متداول مکان-زمان و بررسی شیب خط مماس.</li>
+<li>حل تمرین شماره ۴ کتاب درسی صفحه ۳۲ با مشارکت دانش‌آموزان.</li>
+<li>تکلیف جلسه بعد: حل مسائل ۵ تا ۹ برای مرور و آمادگی کوئیز شبانه.</li>
+</ol>
+</div>
+</div>
+</div>
+</section>
+​<!-- ================= 2. پرسشگر ================= -->
+<section id="tab-porseshgar" class="tab-content hidden space-y-6">
+<div class="max-w-3xl mx-auto bg-slate-900/60 border border-slate-800/80 rounded-2xl p-6 backdrop-blur-sm">
+<div class="flex items-center justify-between pb-4 border-b border-slate-800">
+<div>
+<h2 class="text-lg font-bold text-white flex items-center gap-2">
+<span class="p-2 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-400">
+<i data-lucide="brain-circuit" class="w-5 h-5"></i>
+</span>
+پرسشگر: آزمون بازیابی شبانه (Active Recall)
+</h2>
+<p class="text-xs text-slate-400 mt-1">ساعت ۲۰:۰۰ — سوالات هدفمند بر اساس مباحث تدریس‌شده امروز</p>
+</div>
+<div id="quizBadge" class="text-xs bg-purple-500/15 text-purple-400 px-3 py-1.5 rounded-full border border-purple-500/20 font-medium">
+سوال <span id="currentQNum">۱</span> از ۵
+</div>
+</div>
+​<!-- Progress Bar -->
+<div class="w-full bg-slate-950 h-1.5 rounded-full mt-4 overflow-hidden">
+<div id="quizProgressBar" class="bg-gradient-to-r from-purple-500 to-indigo-500 h-full transition-all duration-300" style="width: 20%"></div>
+</div>
+​<!-- Quiz Box -->
+<div id="quizContainer" class="py-6 space-y-5">
+<h3 id="questionText" class="text-base font-semibold text-slate-100 leading-relaxed">
+شتاب متوسط یک متحرک چگونه تعریف می‌شود؟
+</h3>
+​<div id="optionsContainer" class="space-y-2.5">
+<!-- Dynamically populated options -->
+</div>
+​<!-- Feedback Alert -->
+<div id="feedbackBox" class="hidden p-3.5 rounded-xl border text-xs leading-relaxed"></div>
+​<div class="pt-2 flex justify-end">
+<button id="nextQBtn" onclick="nextQuestion()" disabled class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-40 disabled:hover:bg-indigo-600 text-white rounded-xl text-xs font-semibold transition flex items-center gap-1.5">
+<span>ثبت و سوال بعد</span>
+<i data-lucide="arrow-left" class="w-4 h-4"></i>
+</button>
+</div>
+</div>
+​<!-- Final Score Screen (Hidden) -->
+<div id="quizResultScreen" class="hidden py-10 text-center space-y-4">
+<div class="w-16 h-16 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 mx-auto flex items-center justify-center">
+<i data-lucide="award" class="w-8 h-8"></i>
+</div>
+<h3 class="text-xl font-bold text-white">آفرین! کوئیز امشب را تمام کردی</h3>
+<p id="scoreSummary" class="text-sm text-slate-400">امتیاز نهایی شما: ۴ از ۵ پاسخ صحیح</p>
+<div class="p-4 bg-slate-950/70 border border-slate-800 rounded-xl text-xs text-slate-400 max-w-md mx-auto text-right">
+📌 تحلیل الگوریتم لایتنر آریاد: سطح تسلط شما روی «معادلات حرکت» به سطح ۳ ارتقا یافت. مرور بعدی شما ۵ روز دیگر برنامه‌ریزی شد.
+</div>
+<button onclick="restartQuiz()" class="px-6 py-2.5 bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold rounded-xl border border-slate-700 transition">
+تکرار مجدد کوئیز
+</button>
+</div>
+</div>
+</section>
+​<!-- ================= 3. دیده‌بان ================= -->
+<section id="tab-didehban" class="tab-content hidden space-y-6">
+​<!-- KPI Cards -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+<div class="bg-slate-900/60 border border-slate-800/80 p-5 rounded-2xl relative overflow-hidden">
+<div class="flex items-center justify-between text-slate-400 text-xs">
+<span>میانگین پیشرفت تحصیلی</span>
+<i data-lucide="trending-up" class="w-4 h-4 text-indigo-400"></i>
+</div>
+<div class="text-2xl font-bold text-white mt-2">۱۷.۴ <span class="text-xs font-normal text-slate-500">از ۲۰</span></div>
+<div class="text-[11px] text-emerald-400 mt-1 flex items-center gap-1">
+<span>↑ ۱.۴ نمره</span> نسبت به آزمون‌های ماه قبل
+</div>
+</div>
+​<div class="bg-slate-900/60 border border-slate-800/80 p-5 rounded-2xl relative overflow-hidden">
+<div class="flex items-center justify-between text-slate-400 text-xs">
+<span>شاخص نشاط روانی کلاس</span>
+<i data-lucide="smile" class="w-4 h-4 text-purple-400"></i>
+</div>
+<div class="text-2xl font-bold text-white mt-2">۸۲٪</div>
+<div class="text-[11px] text-slate-400 mt-1">پایش‌شده بر مبنای نرخ مشارکت و کوئیز</div>
+</div>
+​<div class="bg-slate-900/60 border border-slate-800/80 p-5 rounded-2xl relative overflow-hidden">
+<div class="flex items-center justify-between text-slate-400 text-xs">
+<span>پوشش بودجه‌بندی سال</span>
+<i data-lucide="book-open" class="w-4 h-4 text-emerald-400"></i>
+</div>
+<div class="text-2xl font-bold text-white mt-2">۶۸٪</div>
+<div class="text-[11px] text-indigo-400 mt-1">منطبق با تقویم آموزش و پرورش</div>
+</div>
+​<div class="bg-slate-900/60 border border-rose-900/30 p-5 rounded-2xl relative overflow-hidden">
+<div class="flex items-center justify-between text-rose-300 text-xs">
+<span>هشدارهای فعال</span>
+<i data-lucide="alert-triangle" class="w-4 h-4 text-rose-500"></i>
+</div>
+<div class="text-2xl font-bold text-rose-500 mt-2">۲ مورد</div>
+<div class="text-[11px] text-rose-400/80 mt-1">تراکم تکلیف و افت دو دانش‌آموز</div>
+</div>
+</div>
+​<!-- Charts & Smart Recommendations -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+​<!-- Chart -->
+<div class="lg:col-span-2 bg-slate-900/60 border border-slate-800/80 p-6 rounded-2xl">
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-sm font-bold text-slate-200">روند میانگین نمرات کلاسی (۵ هفته گذشته)</h3>
+<span class="text-xs text-slate-500">پایه دهم ریاضی</span>
+</div>
+<div class="h-64 w-full">
+<canvas id="performanceChart"></canvas>
+</div>
+</div>
+​<!-- AI Assistant Alerts (رهیار) -->
+<div class="bg-slate-900/60 border border-slate-800/80 p-6 rounded-2xl flex flex-col justify-between">
+<div>
+<div class="flex items-center gap-2 text-sm font-bold text-amber-400 mb-4">
+<i data-lucide="zap" class="w-4 h-4"></i>
+پیشنهادهای هوشمند رهیار
+</div>
+<div class="space-y-3">
+<div class="p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl text-xs text-slate-300 leading-relaxed">
+<strong class="text-amber-400 block mb-1">⚠️ بار سنگین تکالیف در چهارشنبه:</strong>
+برای روز چهارشنبه ۴ تکلیف همزمان توسط معلمان فیزیک، شیمی و هندسه ثبت شده است. پیشنهاد انتقال تکلیف هندسه به شنبه.
+</div>
+<div class="p-3 bg-rose-500/10 border border-rose-500/20 rounded-xl text-xs text-slate-300 leading-relaxed">
+<strong class="text-rose-400 block mb-1">🔻 نیاز به توجه مشاور:</strong>
+«سجاد کریمی» در ۳ آزمون شبانه اخیر افت ۳۵ درصدی داشته است. پیامک یادآوری جهت جلسه مشاوره ارسال شود؟
+</div>
+</div>
+</div>
+​<div class="mt-4 pt-3 border-t border-slate-800 text-[11px] text-slate-500">
+* این پیشنهادات به صورت خودکار از الگوریتم ماتریس فشار استخراج شده‌اند.
+</div>
+</div>
+</div>
+</section>
+​<!-- ================= 4. مهام ================= -->
+<section id="tab-maham" class="tab-content hidden space-y-6">
+<div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-6 backdrop-blur-sm">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-800">
+<div>
+<h2 class="text-lg font-bold text-white flex items-center gap-2">
+<span class="p-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
+<i data-lucide="calendar-check" class="w-5 h-5"></i>
+</span>
+مهام: مدیریت هوشمند بار تکالیف و سطوح تمرین
+</h2>
+<p class="text-xs text-slate-400 mt-1">کنترل سقف فشار ۳ ساعت تکلیف در روز برای جلوگیری از فرسودگی دانش‌آموزان</p>
+</div>
+​<button class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold flex items-center gap-2 transition self-start sm:self-auto">
+<i data-lucide="plus" class="w-4 h-4"></i>
+ثبت تکلیف جدید
+</button>
+</div>
+​<!-- Weekly Schedule Grid -->
+<div class="grid grid-cols-1 md:grid-cols-5 gap-3 mt-6">
+​<!-- شنبه -->
+<div class="bg-slate-950/70 border border-slate-800/80 rounded-xl p-3.5 space-y-2">
+<div class="flex justify-between items-center text-xs">
+<span class="font-bold text-slate-200">شنبه</span>
+<span class="text-emerald-400 text-[10px] bg-emerald-500/10 px-2 py-0.5 rounded">۱.۵ ساعت (مناسب)</span>
+</div>
+<div class="p-2.5 rounded-lg bg-slate-900 border border-slate-800 text-xs">
+<div class="font-semibold text-indigo-400">فیزیک دهم</div>
+<div class="text-[11px] text-slate-400 mt-0.5">تمرینات ۵ تا ۸ سینماتیک</div>
+<div class="mt-2 flex gap-1">
+<span class="text-[9px] bg-emerald-500/20 text-emerald-300 px-1.5 py-0.5 rounded">سطح ۱: پایه</span>
+<span class="text-[9px] bg-blue-500/20 text-blue-300 px-1.5 py-0.5 rounded">سطح ۲: متوسط</span>
+</div>
+</div>
+</div>
+​<!-- یکشنبه -->
+<div class="bg-slate-950/70 border border-slate-800/80 rounded-xl p-3.5 space-y-2">
+<div class="flex justify-between items-center text-xs">
+<span class="font-bold text-slate-200">یکشنبه</span>
+<span class="text-emerald-400 text-[10px] bg-emerald-500/10 px-2 py-0.5 rounded">۲ ساعت (عادی)</span>
+</div>
+<div class="p-2.5 rounded-lg bg-slate-900 border border-slate-800 text-xs">
+<div class="font-semibold text-purple-400">ریاضی و هندسه</div>
+<div class="text-[11px] text-slate-400 mt-0.5">اثبات قضایای زاویه محاطی</div>
+</div>
+</div>
+​<!-- دوشنبه -->
+<div class="bg-slate-950/70 border border-slate-800/80 rounded-xl p-3.5 space-y-2">
+<div class="flex justify-between items-center text-xs">
+<span class="font-bold text-slate-200">دوشنبه</span>
+<span class="text-slate-500 text-[10px]">خالی</span>
+</div>
+<div class="h-20 flex items-center justify-center text-[11px] text-slate-600 border border-dashed border-slate-800 rounded-lg">
+بدون تکلیف سنگین
+</div>
+</div>
+​<!-- سه‌شنبه -->
+<div class="bg-slate-950/70 border border-slate-800/80 rounded-xl p-3.5 space-y-2">
+<div class="flex justify-between items-center text-xs">
+<span class="font-bold text-slate-200">سه‌‌شنبه</span>
+<span class="text-emerald-400 text-[10px] bg-emerald-500/10 px-2 py-0.5 rounded">۱ ساعت</span>
+</div>
+<div class="p-2.5 rounded-lg bg-slate-900 border border-slate-800 text-xs">
+<div class="font-semibold text-amber-400">شیمی</div>
+<div class="text-[11px] text-slate-400 mt-0.5">موازنه ۵ معادله شیمیایی</div>
+</div>
+</div>
+​<!-- چهارشنبه (هشدار) -->
+<div class="bg-rose-950/20 border border-rose-800/40 rounded-xl p-3.5 space-y-2">
+<div class="flex justify-between items-center text-xs">
+<span class="font-bold text-rose-300">چهارشنبه</span>
+<span class="text-rose-400 text-[10px] bg-rose-500/20 px-2 py-0.5 rounded font-bold">۴.۵ ساعت ⚠️</span>
+</div>
+<div class="p-2 rounded bg-rose-900/30 border border-rose-800/40 text-[10px] text-rose-200">
+تراکم بالا! ظرفیت مجاز ۳ ساعت پر شده است.
+</div>
+<div class="p-2 rounded bg-slate-900 border border-slate-800 text-xs">
+<div class="font-semibold text-slate-300">تحویل پروژه کارگاه</div>
+</div>
+</div>
+​</div>
+</div>
+</section>
+​<!-- ================= 5. همراه ================= -->
+<section id="tab-hamrah" class="tab-content hidden space-y-6">
+<div class="max-w-3xl mx-auto bg-slate-900/60 border border-slate-800/80 rounded-2xl flex flex-col h-[560px] overflow-hidden backdrop-blur-sm">
+​<!-- Chat Header -->
+<div class="px-5 py-4 border-b border-slate-800 bg-slate-950/60 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-xl bg-indigo-600/20 border border-indigo-500/30 text-indigo-400 flex items-center justify-center">
+<i data-lucide="bot" class="w-5 h-5"></i>
+</div>
+<div>
+<h3 class="text-sm font-bold text-white">دستیار رفع اشکال «همراه»</h3>
+<p class="text-[10px] text-slate-400">تنظیم شده مطابق سبک تدریس آقای احمدی و جزوه درس فیزیک</p>
+</div>
+</div>
+<span class="text-[11px] bg-slate-800 text-slate-300 px-2.5 py-1 rounded-full border border-slate-700">RAG فعال</span>
+</div>
+​<!-- Message Area -->
+<div id="chatMessages" class="flex-1 overflow-y-auto p-4 space-y-3.5">
+<div class="flex flex-col items-start">
+<div class="bg-slate-950/80 border border-slate-800 text-slate-200 text-xs leading-relaxed p-3.5 rounded-2xl rounded-tr-none max-w-[85%] shadow-sm">
+سلام علی عزیز! 👋 من دستیار هوشمند فیزیک کلاستون هستم. از مبحث شتاب متوسط یا مسائل امروز سوالی داری تا از روی جزوه آقای احمدی برات توضیح بدم؟
+</div>
+</div>
+</div>
+​<!-- Quick Suggestions -->
+<div class="px-4 py-2 border-t border-slate-800/50 bg-slate-950/30 flex gap-2 overflow-x-auto text-[11px]">
+<button onclick="quickPrompt('فرمول شتاب متوسط رو چطور حساب کنم؟')" class="whitespace-nowrap px-3 py-1 rounded-full bg-slate-800/70 hover:bg-slate-800 text-slate-300 border border-slate-700/60 transition">
+💬 فرمول شتاب متوسط چی بود؟
+</button>
+<button onclick="quickPrompt('تفاوت سرعت با شتاب دقیقا چیه؟')" class="whitespace-nowrap px-3 py-1 rounded-full bg-slate-800/70 hover:bg-slate-800 text-slate-300 border border-slate-700/60 transition">
+💬 فرق سرعت با شتاب چیه؟
+</button>
+</div>
+​<!-- Input Bar -->
+<div class="p-3 border-t border-slate-800 bg-slate-950/80 flex items-center gap-2">
+<input 
+id="chatInput"
+type="text" 
+placeholder="سوالت رو تایپ کن و اینتر بزن..." 
+onkeydown="if(event.key === 'Enter') sendUserMessage()"
+class="flex-1 bg-slate-900 border border-slate-700/80 rounded-xl px-4 py-2.5 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition"
+>
+<button onclick="sendUserMessage()" class="p-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl transition shadow-md shadow-indigo-600/30">
+<i data-lucide="send" class="w-4 h-4"></i>
+</button>
+</div>
+</div>
+</section>
+​</div>
+</main>
+​<!-- ==================== JAVASCRIPT LOGIC ==================== -->
+<script>
+// Initialize Lucide Icons
+lucide.createIcons();
+​// Tab Switching
+function switchTab(tabId) {
+document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+document.querySelectorAll('.nav-item').forEach(el => {
+el.className = 'nav-item w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm font-medium transition-all duration-200 text-slate-400 hover:bg-slate-800/60 hover:text-slate-200';
+});
+​const selectedTab = document.getElementById('tab-' + tabId);
+const selectedNav = document.getElementById('nav-' + tabId);
+if (selectedTab) selectedTab.classList.remove('hidden');
+if (selectedNav) {
+selectedNav.className = 'nav-item w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm font-semibold transition-all duration-200 bg-indigo-600/15 text-indigo-400 border border-indigo-500/30 shadow-sm';
+}
+​// Title change
+const titles = {
+'avayar': 'ماژول آوایار (خلاصه‌ساز صوتی)',
+'porseshgar': 'ماژول پرسشگر (کوئیز شبانه فعال)',
+'didehban': 'داشبورد مدیریتی دیده‌بان',
+'maham': 'ماژول مهام (تقویم و بالانس تکالیف)',
+'hamrah': 'همراه هوشمند دانش‌آموز'
+};
+document.getElementById('currentModuleTitle').textContent = titles[tabId] || '';
+​if (tabId === 'didehban') {
+renderChart();
+}
+}
+​// --- Module 1: Avayar Simulator ---
+let recording = false;
+let timerInterval = null;
+let seconds = 0;
+​function toggleRecording() {
+const micBtn = document.getElementById('micInner');
+const micIcon = document.getElementById('micIcon');
+const feedback = document.getElementById('recordingFeedback');
+const idlePrompt = document.getElementById('recordIdlePrompt');
+const result = document.getElementById('sessionResult');
+​if (!recording) {
+recording = true;
+seconds = 0;
+document.getElementById('recordTimer').innerText = '00:00';
+feedback.classList.remove('hidden');
+idlePrompt.classList.add('hidden');
+result.classList.add('hidden');
+​micBtn.classList.remove('bg-rose-600', 'hover:bg-rose-500');
+micBtn.classList.add('bg-slate-800', 'hover:bg-slate-700', 'border', 'border-slate-700');
+micIcon.setAttribute('data-lucide', 'square');
+lucide.createIcons();
+​timerInterval = setInterval(() => {
+seconds++;
+const mins = String(Math.floor(seconds / 60)).padStart(2, '0');
+const secs = String(seconds % 60).padStart(2, '0');
+document.getElementById('recordTimer').innerText = ${mins}:${secs};
+}, 1000);
+} else {
+recording = false;
+clearInterval(timerInterval);
+feedback.classList.add('hidden');
+idlePrompt.classList.remove('hidden');
+​micBtn.classList.add('bg-rose-600', 'hover:bg-rose-500');
+micBtn.classList.remove('bg-slate-800', 'hover:bg-slate-700', 'border', 'border-slate-700');
+micIcon.setAttribute('data-lucide', 'mic');
+lucide.createIcons();
+​// Show AI summary card
+result.classList.remove('hidden');
+}
+}
+​function publishSummary() {
+const btn = document.getElementById('publishBtn');
+btn.innerText = 'منتشر شد ✓';
+btn.classList.remove('bg-indigo-600');
+btn.classList.add('bg-emerald-600');
+setTimeout(() => {
+btn.innerHTML = '<i data-lucide="send" class="w-3.5 h-3.5"></i> انتشار برای دانش‌آموزان کلاس';
+btn.classList.add('bg-indigo-600');
+btn.classList.remove('bg-emerald-600');
+lucide.createIcons();
+}, 2500);
+}
+​// --- Module 2: Porsesh-Gar Quiz Logic ---
+const quizData = [
+{
+q: "شتاب متوسط یک متحرک چگونه تعریف می‌شود؟",
+options: ["نسبت جابجایی به بازه زمانی کل", "تغییرات سرعت در واحد زمان", "مشتق دوم جابجایی نسبت به سرعت", "مساحت زیر نمودار سرعت-زمان"],
+ans: 1,
+exp: "پاسخ صحیح: شتاب متوسط (a_{avg}) دقیقاً از تقسیم تغییرات بردار سرعت (\Delta v) بر زمان (\Delta t) به دست می‌آید."
+},
+{
+q: "اگر سرعت متحرکی ثابت باشد، شتاب آن برابر با چه مقداری است؟",
+options: ["همواره مثبت است", "ثابت ولی غیرصفر است", "دقیقاً صفر است", "بستگی به جهت حرکت دارد"],
+ans: 2,
+exp: "چون مقدار سرعت تغییری نمی‌کند (\Delta v = 0)، صورت کسر صفر شده و شتاب قطعاً صفر است."
+},
+{
+q: "شیب خط مماس بر نمودار سرعت-زمان معرف کدام کمیت فیزیکی است؟",
+options: ["شتاب لحظه‌ای", "مکان متحرک", "شتاب متوسط کل مسیر", "سرعت متوسط"],
+ans: 0,
+exp: "شیب خط مماس در هر لحظه نشان‌دهنده مشتق سرعت، یعنی شتاب لحظه‌ای است."
+},
+{
+q: "علامت منفی در شتاب متحرک نشان‌دهنده چیست؟",
+options: ["حتماً حرکت کندشونده است", "جهت بردار شتاب در خلاف جهت محور مختصات است", "متحرک به عقب حرکت می‌کند", "سرعت متحرک صفر شده است"],
+ans: 1,
+exp: "علامت منفی صرفاً جهت بردار را در دستگاه مختصات نشان می‌دهد و به تنهایی دلیل بر تند یا کندشونده بودن حرکت نیست."
+},
+{
+q: "مساحت زیر نمودار سرعت-زمان بیانگر چیست؟",
+options: ["شتاب متوسط", "سرعت اولیه", "میزان جابجایی متحرک", "مدت زمان حرکت"],
+ans: 2,
+exp: "طبق رابطه انتگرالی، سطح زیر منحنی سرعت-زمان برابر با جابجایی (\Delta x) متحرک است."
+}
+];
+​let currentQ = 0;
+let selectedOption = null;
+let userScore = 0;
+​function renderQuestion() {
+const q = quizData[currentQ];
+document.getElementById('currentQNum').innerText = currentQ + 1;
+document.getElementById('questionText').innerText = q.q;
+document.getElementById('quizProgressBar').style.width = ${((currentQ + 1) / quizData.length) * 100}%;
+​const optContainer = document.getElementById('optionsContainer');
+optContainer.innerHTML = '';
+​const feedback = document.getElementById('feedbackBox');
+feedback.className = 'hidden';
+document.getElementById('nextQBtn').disabled = true;
+selectedOption = null;
+​q.options.forEach((opt, idx) => {
+const btn = document.createElement('button');
+btn.className = 'opt-btn w-full text-right p-3.5 rounded-xl border border-slate-800 bg-slate-950/70 hover:bg-slate-800/80 text-xs text-slate-200 transition';
+btn.innerText = opt;
+btn.onclick = () => selectQuizAnswer(idx, btn);
+optContainer.appendChild(btn);
+});
+}
+​function selectQuizAnswer(index, btnElem) {
+if (selectedOption !== null) return;
+selectedOption = index;
+​const q = quizData[currentQ];
+const allBtns = document.querySelectorAll('.opt-btn');
+const feedback = document.getElementById('feedbackBox');
+​if (index === q.ans) {
+userScore++;
+btnElem.className = 'opt-btn w-full text-right p-3.5 rounded-xl border border-emerald-500 bg-emerald-500/15 text-xs text-emerald-300 font-semibold';
+feedback.className = 'p-3.5 rounded-xl border border-emerald-500/20 bg-emerald-950/20 text-emerald-400 text-xs leading-relaxed block';
+feedback.innerHTML = ✓ ${q.exp};
+} else {
+btnElem.className = 'opt-btn w-full text-right p-3.5 rounded-xl border border-rose-500 bg-rose-500/15 text-xs text-rose-300 font-semibold';
+allBtns[q.ans].className = 'opt-btn w-full text-right p-3.5 rounded-xl border border-emerald-500/60 bg-emerald-500/10 text-xs text-emerald-300';
+feedback.className = 'p-3.5 rounded-xl border border-rose-500/20 bg-rose-950/20 text-rose-300 text-xs leading-relaxed block';
+feedback.innerHTML = ✕ اشتباه بود. ${q.exp};
+}
+​document.getElementById('nextQBtn').disabled = false;
+}
+​function nextQuestion() {
+if (currentQ < quizData.length - 1) {
+currentQ++;
+renderQuestion();
+} else {
+document.getElementById('quizContainer').classList.add('hidden');
+document.getElementById('quizBadge').classList.add('hidden');
+document.getElementById('quizResultScreen').classList.remove('hidden');
+document.getElementById('scoreSummary').innerText = امتیاز نهایی شما: ${userScore} از ${quizData.length} پاسخ صحیح;
+}
+}
+​function restartQuiz() {
+currentQ = 0;
+userScore = 0;
+document.getElementById('quizContainer').classList.remove('hidden');
+document.getElementById('quizBadge').classList.remove('hidden');
+document.getElementById('quizResultScreen').classList.add('hidden');
+renderQuestion();
+}
+​renderQuestion();
+​// --- Module 3: Chart.js Setup ---
+let chartInstance = null;
+function renderChart() {
+if (chartInstance) return;
+const ctx = document.getElementById('performanceChart');
+if (!ctx) return;
+​chartInstance = new Chart(ctx, {
+type: 'line',
+data: {
+labels: ['هفته ۱', 'هفته ۲', 'هفته ۳', 'هفته ۴', 'هفته ۵'],
+datasets: [{
+label: 'میانگین نمره کلاس',
+data: [15.2, 16.0, 15.8, 16.9, 17.4],
+borderColor: '#6366f1',
+backgroundColor: 'rgba(99, 102, 241, 0.1)',
+fill: true,
+tension: 0.35,
+borderWidth: 2.5,
+pointBackgroundColor: '#6366f1',
+pointRadius: 4
+}]
+},
+options: {
+responsive: true,
+maintainAspectRatio: false,
+scales: {
+y: {
+min: 12,
+max: 20,
+grid: { color: '#1e293b' },
+ticks: { color: '#94a3b8', font: { family: 'Vazirmatn' } }
+},
+x: {
+grid: { color: '#1e293b' },
+ticks: { color: '#94a3b8', font: { family: 'Vazirmatn' } }
+}
+},
+plugins: {
+legend: { display: false }
+}
+}
+});
+}
+​// --- Module 5: Hamrah AI Assistant ---
+function sendUserMessage() {
+const input = document.getElementById('chatInput');
+const text = input.value.trim();
+if (!text) return;
+​appendChatMessage(text, 'user');
+input.value = '';
+​setTimeout(() => {
+let answer = "این مفهوم در جزوه فیزیک فصل ۲ به خوبی توضیح داده شده. شتاب متوسط نسبت تغییر سرعت بر زمان است و واحد آن در SI متر بر مجذور ثانیه می‌باشد.";
+if (text.includes("فرق") || text.includes("تفاوت")) {
+answer = "تفاوت در اینجاست: «سرعت» نرخ تغییر مکان است؛ در حالی که «شتاب» نرخ تغییر خود سرعت است. وقتی پدال گاز را فشار می‌دهید، سرعت‌‌تان تغییر می‌کند که نشان‌دهنده وجود شتاب است! (صفحه ۱۸ جزوه)";
+}
+appendChatMessage(answer, 'ai', 'منبع: جزوه فیزیک آقای احمدی — صفحه ۱۸');
+}, 700);
+}
+​function quickPrompt(str) {
+document.getElementById('chatInput').value = str;
+sendUserMessage();
+}
+​function appendChatMessage(text, sender, source = null) {
+const container = document.getElementById('chatMessages');
+const wrap = document.createElement('div');
+wrap.className = flex flex-col ${sender === 'user' ? 'items-end' : 'items-start'};
+​const bubble = document.createElement('div');
+bubble.className = sender === 'user'
+? 'bg-indigo-600 text-white text-xs leading-relaxed p-3 rounded-2xl rounded-tl-none max-w-[85%] shadow-sm'
+: 'bg-slate-950/80 border border-slate-800 text-slate-200 text-xs leading-relaxed p-3.5 rounded-2xl rounded-tr-none max-w-[85%] shadow-sm';
+bubble.innerText = text;
+​wrap.appendChild(bubble);
+​if (source) {
+const srcTag = document.createElement('span');
+srcTag.className = 'text-[10px] text-indigo-400 mt-1 font-medium';
+srcTag.innerText = source;
+wrap.appendChild(srcTag);
+}
+​container.appendChild(wrap);
+container.scrollTop = container.scrollHeight;
+}
+</script>
+</body>
+</html>
